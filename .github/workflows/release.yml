@@ -1,0 +1,40 @@
+name: Publish Python Package
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: Install pypa/build
+        run: >-
+          python -m pip install --upgrade pip &&
+          pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Make new release
+        run: >
+          gh release create ${{ github.ref_name }} \
+            --repo ${{ github.repository }} \
+            --generate-notes dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
