@@ -1,4 +1,4 @@
-unique-log-filter
+unique_log_filter
 =================
 
 A simple tool to filter out duplicate lines from a log file. Usage is simple:
